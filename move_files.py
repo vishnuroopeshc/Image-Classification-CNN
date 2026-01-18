@@ -47,7 +47,7 @@ def move_files_to_root(subfolder_name):
     
     # Ask for confirmation
     try:
-        response = input(f"\nDo you want to move these {len(files_to_move)} file(s)? (yes/no): ")
+        response = input(f"\nDo you want to move these {len(files_to_move)} file(s)? (yes/y or no/n): ")
     except (EOFError, KeyboardInterrupt):
         print("\nOperation cancelled")
         sys.exit(0)
@@ -96,7 +96,7 @@ def move_files_to_root(subfolder_name):
     if not remaining_items:
         print(f"\nThe subfolder '{subfolder_name}' is now empty.")
         try:
-            remove = input(f"Do you want to remove it? (yes/no): ")
+            remove = input(f"Do you want to remove it? (yes/y or no/n): ")
             if remove.lower() in ['yes', 'y']:
                 subfolder_path.rmdir()
                 print(f"  Removed empty subfolder '{subfolder_name}'")
