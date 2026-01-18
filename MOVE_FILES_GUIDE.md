@@ -27,8 +27,10 @@ cd /path/to/Image-Classification-CNN
 # Move all files from subfolder to current directory
 mv subfolder/* .
 
-# Remove empty subfolder (optional)
+# Remove empty subfolder (optional - only works if subfolder is completely empty)
 rmdir subfolder
+# If subfolder still contains hidden files or subdirectories, use:
+# rm -rf subfolder  # WARNING: This permanently deletes everything in the folder
 
 # Add and commit changes
 git add .
@@ -45,8 +47,11 @@ cd C:\path\to\Image-Classification-CNN
 # Move all files from subfolder to current directory
 move subfolder\*.* .
 
-# Remove empty subfolder (optional)
+# Remove empty subfolder (optional - only works if subfolder is completely empty)
 rmdir subfolder
+# If subfolder still contains hidden files or subdirectories, use:
+# rmdir /s subfolder  # WARNING: This will prompt before deleting
+# rmdir /s /q subfolder  # WARNING: This permanently deletes everything without prompting
 
 # Add and commit changes
 git add .

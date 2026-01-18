@@ -107,8 +107,12 @@ def move_files_to_root(subfolder_name):
     if not remaining_items:
         print(f"\nThe subfolder '{subfolder_name}' is now empty.")
         if confirm_action(f"Do you want to remove it? (yes/y or no/n): "):
-            subfolder_path.rmdir()
-            print(f"  Removed empty subfolder '{subfolder_name}'")
+            try:
+                subfolder_path.rmdir()
+                print(f"  Removed empty subfolder '{subfolder_name}'")
+            except OSError as e:
+                print(f"  Error: Could not remove subfolder '{subfolder_name}': {e}")
+                print(f"  You may need to remove it manually")
         else:
             print(f"  Keeping the empty subfolder")
     else:
