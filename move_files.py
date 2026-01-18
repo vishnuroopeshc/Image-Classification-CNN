@@ -81,11 +81,20 @@ def move_files_to_root(subfolder_name):
             skipped_count += 1
             continue
         
+        # Security check: ensure destination is within root directory
+        try:
+            destination.resolve().relative_to(root_dir.resolve())
+        except ValueError:
+            error_msg = f"  Security error: {file.name} would be moved outside root directory"
+            print(error_msg)
+            errors.append(error_msg)
+            continue
+        
         try:
             shutil.move(file, destination)
             print(f"  Moved: {file.name}")
             moved_count += 1
-        except Exception as e:
+        except (OSError, PermissionError, FileExistsError) as e:
             error_msg = f"  Error moving {file.name}: {str(e)}"
             print(error_msg)
             errors.append(error_msg)
@@ -103,23 +112,29 @@ def move_files_to_root(subfolder_name):
             print(error)
     
     # Check if subfolder is now empty
-    remaining_items = list(subfolder_path.iterdir())
-    if not remaining_items:
-        print(f"\nThe subfolder '{subfolder_name}' is now empty.")
-        if confirm_action(f"Do you want to remove it? (yes/y or no/n): "):
-            try:
-                subfolder_path.rmdir()
-                print(f"  Removed empty subfolder '{subfolder_name}'")
-            except OSError as e:
-                print(f"  Error: Could not remove subfolder '{subfolder_name}': {e}")
-                print(f"  You may need to remove it manually")
+    try:
+        # Load remaining items to check and display
+        remaining_items = list(subfolder_path.iterdir())
+        if not remaining_items:
+            # Folder is empty
+            print(f"\nThe subfolder '{subfolder_name}' is now empty.")
+            if confirm_action(f"Do you want to remove it? (yes/y or no/n): "):
+                try:
+                    subfolder_path.rmdir()
+                    print(f"  Removed empty subfolder '{subfolder_name}'")
+                except OSError as e:
+                    print(f"  Error: Could not remove subfolder '{subfolder_name}': {e}")
+                    print(f"  You may need to remove it manually")
+            else:
+                print(f"  Keeping the empty subfolder")
         else:
-            print(f"  Keeping the empty subfolder")
-    else:
-        print(f"\nThe subfolder '{subfolder_name}' still contains:")
-        for item in remaining_items:
-            item_type = "directory" if item.is_dir() else "file"
-            print(f"  - {item.name} ({item_type})")
+            # Folder is not empty, show what's left
+            print(f"\nThe subfolder '{subfolder_name}' still contains:")
+            for item in remaining_items:
+                item_type = "directory" if item.is_dir() else "file"
+                print(f"  - {item.name} ({item_type})")
+    except PermissionError:
+        print(f"\nWarning: Cannot check subfolder contents (permission denied)")
     
     print(f"\n{'='*60}")
     print("Next steps:")
