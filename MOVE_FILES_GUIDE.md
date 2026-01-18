@@ -43,7 +43,7 @@ git push
 cd C:\path\to\Image-Classification-CNN
 
 # Move all files from subfolder to current directory
-move subfolder\* .
+move subfolder\*.* .
 
 # Remove empty subfolder (optional)
 rmdir subfolder

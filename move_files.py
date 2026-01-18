@@ -71,7 +71,7 @@ def move_files_to_root(subfolder_name):
             continue
         
         try:
-            shutil.move(str(file), str(destination))
+            shutil.move(file, destination)
             print(f"  Moved: {file.name}")
             moved_count += 1
         except Exception as e:
@@ -130,8 +130,11 @@ def main():
     
     # Validate subfolder name
     if subfolder_name.startswith('.'):
-        print("Error: Hidden directories (starting with '.') are not supported")
-        sys.exit(1)
+        print("Warning: Moving files from a hidden directory (starting with '.').")
+        response = input("Are you sure you want to continue? (yes/y or no/n): ")
+        if response.lower() not in ['yes', 'y']:
+            print("Operation cancelled")
+            sys.exit(0)
     
     if '/' in subfolder_name or '\\' in subfolder_name:
         print("Error: Please provide only the subfolder name, not a path")
