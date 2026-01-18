@@ -4,7 +4,6 @@ Helper script to move files from a subfolder to the root directory.
 Usage: python move_files.py <subfolder_name>
 """
 
-import os
 import sys
 import shutil
 from pathlib import Path
