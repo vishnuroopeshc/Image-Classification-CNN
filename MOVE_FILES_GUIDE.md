@@ -44,8 +44,8 @@ git push
 # Navigate to repository root
 cd C:\path\to\Image-Classification-CNN
 
-# Move all files from subfolder to current directory
-move subfolder\*.* .
+# Move all files from subfolder to current directory (including files without extensions)
+move subfolder\* .
 
 # Remove empty subfolder (optional - only works if subfolder is completely empty)
 rmdir subfolder
