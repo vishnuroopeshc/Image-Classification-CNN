@@ -9,6 +9,24 @@ import shutil
 from pathlib import Path
 
 
+def confirm_action(prompt):
+    """
+    Ask user for confirmation with consistent yes/no handling.
+    
+    Args:
+        prompt (str): The prompt to display to the user
+        
+    Returns:
+        bool: True if user confirmed (yes/y), False otherwise
+    """
+    try:
+        response = input(prompt)
+        return response.lower() in ['yes', 'y']
+    except (EOFError, KeyboardInterrupt):
+        print("\nOperation cancelled")
+        return False
+
+
 def move_files_to_root(subfolder_name):
     """
     Move all files from the specified subfolder to the root directory.
@@ -46,14 +64,7 @@ def move_files_to_root(subfolder_name):
         print(f"  - {file.name}")
     
     # Ask for confirmation
-    try:
-        response = input(f"\nDo you want to move these {len(files_to_move)} file(s)? (yes/y or no/n): ")
-    except (EOFError, KeyboardInterrupt):
-        print("\nOperation cancelled")
-        sys.exit(0)
-        
-    if response.lower() not in ['yes', 'y']:
-        print("Operation cancelled")
+    if not confirm_action(f"\nDo you want to move these {len(files_to_move)} file(s)? (yes/y or no/n): "):
         sys.exit(0)
     
     # Move files
@@ -95,13 +106,11 @@ def move_files_to_root(subfolder_name):
     remaining_items = list(subfolder_path.iterdir())
     if not remaining_items:
         print(f"\nThe subfolder '{subfolder_name}' is now empty.")
-        try:
-            remove = input(f"Do you want to remove it? (yes/y or no/n): ")
-            if remove.lower() in ['yes', 'y']:
-                subfolder_path.rmdir()
-                print(f"  Removed empty subfolder '{subfolder_name}'")
-        except (EOFError, KeyboardInterrupt):
-            print("\n  Keeping the empty subfolder")
+        if confirm_action(f"Do you want to remove it? (yes/y or no/n): "):
+            subfolder_path.rmdir()
+            print(f"  Removed empty subfolder '{subfolder_name}'")
+        else:
+            print(f"  Keeping the empty subfolder")
     else:
         print(f"\nThe subfolder '{subfolder_name}' still contains:")
         for item in remaining_items:
@@ -131,9 +140,7 @@ def main():
     # Validate subfolder name
     if subfolder_name.startswith('.'):
         print("Warning: Moving files from a hidden directory (starting with '.').")
-        response = input("Are you sure you want to continue? (yes/y or no/n): ")
-        if response.lower() not in ['yes', 'y']:
-            print("Operation cancelled")
+        if not confirm_action("Are you sure you want to continue? (yes/y or no/n): "):
             sys.exit(0)
     
     if '/' in subfolder_name or '\\' in subfolder_name:
